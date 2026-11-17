@@ -1,17 +1,18 @@
 import { Bot } from 'lucide-react'
 import type React from 'react'
+import { getScoreStatus } from '../../lib/matchScoreUtils'
 
 export function MatchBadge({ score }: { readonly score: number | null }): React.ReactElement | null {
   if (score === null) return null
-  if (score < 0) {
-    const label = score === -1 ? '...' : 'Failed'
-    const color = score === -1 ? '#9ca3af' : '#f87171'
+  const status = getScoreStatus(score)
+  if (status) {
     return (
       <span
         className="inline-flex items-center justify-center min-w-[52px] h-[28px] rounded-full text-[11px] font-semibold px-2"
-        style={{ background: 'rgba(156,163,175,0.1)', color }}
+        style={{ background: 'rgba(156,163,175,0.1)', color: status.color }}
+        title={status.title}
       >
-        {label}
+        {status.label}
       </span>
     )
   }

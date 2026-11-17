@@ -115,7 +115,8 @@ namespace ATStool.Services
                     Skills = x.c.Skills?.Any() == true ? x.c.Skills : null,
                     Experience = x.c.Experience,
                     Education = x.c.Education,
-                    MatchScore = x.a.ATSscore.HasValue && x.a.ATSscore.Value >= 0 ? (int?)x.a.ATSscore.Value : null,
+                    // Sentinels (-1 pending, -2 failed, -3 needs review) pass through, same as the SSE push
+                    MatchScore = x.a.ATSscore.HasValue ? (int?)x.a.ATSscore.Value : null,
                     // ✅ Status always from Applications
                     Status = x.a.Status,
                     CurrentRound = x.a.Status == "interviewing"
@@ -189,7 +190,7 @@ namespace ATStool.Services
                 Name = candidate.Name,
                 CurrentRole = job?.JobTitle,
                 AvatarUrl = candidate.AvatarUrl,
-                MatchScore = application.ATSscore.HasValue && application.ATSscore.Value >= 0 ? (int?)application.ATSscore.Value : null,
+                MatchScore = application.ATSscore.HasValue ? (int?)application.ATSscore.Value : null, // sentinels pass through
                 IsDuplicate = applicationCount > 1,
                 AppliedJob = job != null ? new AppliedJobDto
                 {

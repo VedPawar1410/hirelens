@@ -29,6 +29,16 @@ class ATSScorer:
 
             result = await ATSAnalyzer.score_candidate(resume_content, jd_content)
 
+            if result is not None and result.get("flagged"):
+                # Suspected prompt injection: no score is trusted. The backend stores this as
+                # "needs review" (-3) and does not retry it.
+                return ScoreCandidateResponse(
+                    candidateId=candidate_id,
+                    atsScore=0,
+                    status="flagged",
+                    error=result["flag_reason"],
+                )
+
             if result is not None:
                 final_score = result["final_score"]
                 breakdown_data = result.get("breakdown")

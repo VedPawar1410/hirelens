@@ -22,6 +22,10 @@ namespace ATStool.Services
     {
         private const int ChunkSize = 50;
 
+        // ATSscore sentinels: null = unscored, -1 = in flight, -2 = failed, -3 = needs review
+        // (the AI service flagged a possible prompt injection, so no score is stored).
+        private const double NeedsReviewScore = -3;
+
         private readonly Channel<AtsScoreJob> _channel;
         private readonly ISseService _sseService;
         private readonly IServiceScopeFactory _scopeFactory;
@@ -144,6 +148,12 @@ namespace ATStool.Services
                 .Where(r => r.Status == "success" && r.ATSScore.HasValue)
                 .ToDictionary(r => r.CandidateId, r => r.ATSScore!.Value);
 
+            // Suspected prompt injection: no score is trusted and a retry would be flagged again.
+            var flagged = pythonResults
+                .Where(r => r.Status == "flagged")
+                .Select(r => r.CandidateId)
+                .ToHashSet();
+
             // Batch-fetch all applications for the entire chunk in one query
             var candidateIds = chunk.Select(j => j.CandidateId).ToList();
             var jobIds = chunk.Select(j => j.JobId).ToList();
@@ -169,6 +179,10 @@ namespace ATStool.Services
                 if (resultMap.TryGetValue(job.CandidateId, out var score))
                 {
                     app.ATSscore = score;
+                }
+                else if (flagged.Contains(job.CandidateId))
+                {
+                    app.ATSscore = NeedsReviewScore;
                 }
                 else if (job.RetryCount < AtsScoreJob.MaxRetries)
                 {

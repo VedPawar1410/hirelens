@@ -20,6 +20,13 @@ describe('MatchBadge', () => {
     expect(screen.getByText('Failed')).toHaveStyle({ color: '#f87171' })
   })
 
+  it('renders amber "Review" with an explanation for -3 (flagged prompt injection)', () => {
+    render(<MatchBadge score={-3} />)
+    const badge = screen.getByText('Review')
+    expect(badge).toHaveStyle({ color: '#f59e0b' })
+    expect(badge).toHaveAttribute('title', expect.stringContaining('prompt injection'))
+  })
+
   it('renders green badge for 80+ score with a Bot icon', () => {
     const { container } = render(<MatchBadge score={92} />)
     expect(screen.getByText('92%')).toBeInTheDocument()
