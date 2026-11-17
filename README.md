@@ -1,5 +1,7 @@
 # HireLens
 
+[![CI](https://github.com/VedPawar1410/hirelens/actions/workflows/ci.yml/badge.svg)](https://github.com/VedPawar1410/hirelens/actions/workflows/ci.yml)
+
 An open-source applicant tracking system: recruiters generate job descriptions with an LLM, upload resumes in bulk, and get an AI match score per candidate that is guarded against prompt injection. Interviewers get their own portal for assigned roles, scheduling and feedback.
 
 **Live demo:** https://hirelens-inky.vercel.app (free hosting: the first request after ~15 idle minutes takes ~30-60 s while the backend wakes up)
@@ -222,6 +224,7 @@ HireLens was built in layers: my prototypes, a team product, and a rebuild after
 | 3.8 | Eval first: 15 synthetic cases incl. two injections, bands fixed before running | Fixes 2.2; the baseline exposed 2.3 |
 | 3.9 | Defence in depth: system/untrusted-data prompt split, Prompt Guard 2, schema/role regex, "Review" state end to end (-3, not retried) | Fixes 2.3: 0/2 → 2/2 caught, 0 false positives; each layer caught what another missed |
 | 3.10 | Internal key between API and AI service; `/ai-wake` from outside Render plus a retry handler | Free hosting exposes the AI service publicly and does not wake it from internal calls (measured: 14 instant 502s, then a 32.8 s wake from outside) |
+| 3.11 | GitHub Actions CI: frontend lint/test/build, AI service pytest, backend build that fails on known-vulnerable NuGet packages | Fixes 2.7; the vulnerability gate was checked both ways (fails on the old backend, passes today) |
 
 *Known gaps I chose not to fix:* the spaCy decision (remove it or install the model), the "partial" band calibration, 43 .NET nullable warnings, the single large JS bundle, a harmless `libgssapi` startup log line, and a live test of interview emails.
 
@@ -236,6 +239,5 @@ HireLens was built in layers: my prototypes, a team product, and a rebuild after
 ## Future improvements
 
 - A real-resume validation set with recruiter labels, to calibrate scores beyond synthetic bands
-- CI (GitHub Actions) running the frontend, Python and .NET checks on every push
 - A "waking the AI service" message in the UI during cold starts
 - Decide on spaCy, split the frontend bundle, clear the nullable warnings
