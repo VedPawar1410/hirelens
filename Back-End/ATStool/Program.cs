@@ -156,6 +156,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Unauthenticated liveness probe for Render / docker compose health checks.
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+
 app.Run();
 
 // ── Role seeding ──────────────────────────────────────────────────────────────
