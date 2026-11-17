@@ -148,3 +148,16 @@ def test_name_split_does_not_turn_a_job_title_into_a_name():
     from resume_extraction.parser import ContactInfoParser
     name, _ = ContactInfoParser.extract_name("Senior Backend Engineer - 5 years\nPython, FastAPI, PostgreSQL")
     assert name is None
+
+
+def test_internal_key_protects_every_route_except_health(monkeypatch):
+    from fastapi.testclient import TestClient
+    import api_server
+    monkeypatch.setattr(api_server, "INTERNAL_API_KEY", "s3cret")
+    client = TestClient(api_server.app)
+
+    assert client.get("/health").status_code == 200
+    assert client.post("/score-candidates", json={}).status_code == 401
+    assert client.post("/send-interview-email", json={}, headers={"X-Internal-Key": "wrong"}).status_code == 401
+    # Right key passes the gate (then fails validation on the empty body, not auth)
+    assert client.post("/score-candidates", json={}, headers={"X-Internal-Key": "s3cret"}).status_code == 422

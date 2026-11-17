@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel
 from typing import Optional, List
 from jd_creation.jd_generator import JDGenerator
@@ -13,6 +13,7 @@ from ats_scoring.scorer import ATSScorer
 from ats_scoring.analyzer import ATSAnalyzer
 from Email_sender.email_service import EmailService
 from Email_sender.models import SendInterviewEmailRequest, SendInterviewEmailResponse
+import hmac
 import httpx
 import os
 from dotenv import load_dotenv
@@ -32,6 +33,22 @@ app = FastAPI(
     version="1.0.0",
     description="REST API for generating Job Descriptions using LLM"
 )
+
+# Only the .NET API may call this service. On free hosting it has a public URL, so without
+# a shared secret anyone could spend the LLM keys or send email through it.
+# INTERNAL_API_KEY unset = local development, check skipped.
+INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY")
+PUBLIC_PATHS = {"/health"}
+
+
+@app.middleware("http")
+async def require_internal_key(request, call_next):
+    if INTERNAL_API_KEY and request.url.path not in PUBLIC_PATHS:
+        supplied = request.headers.get("X-Internal-Key", "")
+        if not hmac.compare_digest(supplied.encode(), INTERNAL_API_KEY.encode()):
+            return JSONResponse(status_code=401, content={"detail": "Missing or invalid internal key"})
+    return await call_next(request)
+
 
 # Allow .NET backend and Frontend to call this API (CORS)
 app.add_middleware(

@@ -92,7 +92,10 @@ builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<ICandidateService, CandidateService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddSingleton<IBlobService, DbBlobService>(); // files live in Postgres (StoredFiles)
-builder.Services.AddHttpClient<IExternalApiService, ExternalApiService>();
+// Every client that calls the Python AI service sends the shared X-Internal-Key header.
+builder.Services.AddTransient<AiServiceKeyHandler>();
+builder.Services.AddHttpClient<IExternalApiService, ExternalApiService>()
+    .AddHttpMessageHandler<AiServiceKeyHandler>();
 builder.Services.AddScoped<GlobalExceptionHandler>();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<ICategorizationService, CategorizationService>();
@@ -110,13 +113,13 @@ builder.Services.AddHttpClient<IInterviewEmailNotificationService, InterviewEmai
         ?? "http://localhost:8000";
     client.BaseAddress = new Uri(baseUrl);
     client.Timeout = TimeSpan.FromSeconds(30);
-});
+}).AddHttpMessageHandler<AiServiceKeyHandler>();
 
 builder.Services.AddHttpClient<IParsingService, ParsingService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ExternalApi:ParsingUrl"]);
     client.Timeout = TimeSpan.FromMinutes(10);
-});
+}).AddHttpMessageHandler<AiServiceKeyHandler>();
 
 // ── ATS Scoring queue — Channel + Worker + SSE ────────────────────────────────
 builder.Services.AddSingleton(_ =>
@@ -132,7 +135,7 @@ builder.Services.AddHttpClient("AtsScoreClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ATSScoreGeneration:BaseUrl"]!);
     client.Timeout = TimeSpan.FromMinutes(10);
-});
+}).AddHttpMessageHandler<AiServiceKeyHandler>();
 
 builder.Services.AddHostedService<AtsScoreWorker>();
 

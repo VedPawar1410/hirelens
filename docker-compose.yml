@@ -21,6 +21,8 @@ services:
     env_file:
       - path: ./AI_Models/.env
         required: false
+    environment:
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-}
     ports:
       - "8000:8000"
 
@@ -41,6 +43,7 @@ services:
       ExternalApi__BaseUrl: http://ai:8000/generate-jd
       ExternalApi__PdfUrl: http://ai:8000/download-pdf
       ATSScoreGeneration__BaseUrl: http://ai:8000
+      AiService__InternalKey: ${INTERNAL_API_KEY:-}
     ports:
       - "5171:8080"
 

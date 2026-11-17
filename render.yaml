@@ -1,0 +1,61 @@
+# Render Blueprint: the two backend services on the free plan (Docker).
+# Database: Neon Postgres (free, does not expire) - paste its connection string below.
+# Frontend: Vercel (Front-End/vercel.json proxies /api to hirelens-api).
+# "sync: false" values are secrets you enter in the Render dashboard; they never live in git.
+services:
+  - type: web
+    name: hirelens-ai
+    runtime: docker
+    rootDir: AI_Models
+    plan: free
+    region: singapore
+    healthCheckPath: /health
+    envVars:
+      - key: INTERNAL_API_KEY        # shared with hirelens-api; generated once by Render
+        generateValue: true
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SENDER_EMAIL            # optional: interview emails via a Gmail App Password
+        sync: false
+      - key: SENDER_PASSWORD
+        sync: false
+      - key: SENDER_NAME
+        value: HR Team - Acme Corp
+
+  - type: web
+    name: hirelens-api
+    runtime: docker
+    rootDir: Back-End/ATStool
+    plan: free
+    region: singapore
+    healthCheckPath: /health
+    envVars:
+      - key: ConnectionStrings__DefaultConnection   # Neon, Npgsql format (see README)
+        sync: false
+      - key: Jwt__Key
+        generateValue: true
+      - key: Jwt__Issuer
+        value: hirelens
+      - key: Jwt__Audience
+        value: hirelens
+      - key: Seed__AdminPassword
+        sync: false
+      - key: Seed__DemoPassword
+        sync: false
+      - key: AllowedOrigins__0                       # your Vercel URL, e.g. https://hirelens.vercel.app
+        sync: false
+      - key: AiService__InternalKey
+        fromService:
+          type: web
+          name: hirelens-ai
+          envVarKey: INTERNAL_API_KEY
+      - key: ExternalApi__ParsingUrl
+        value: https://hirelens-ai.onrender.com
+      - key: ExternalApi__BaseUrl
+        value: https://hirelens-ai.onrender.com/generate-jd
+      - key: ExternalApi__PdfUrl
+        value: https://hirelens-ai.onrender.com/download-pdf
+      - key: ATSScoreGeneration__BaseUrl
+        value: https://hirelens-ai.onrender.com
