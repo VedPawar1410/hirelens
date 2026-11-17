@@ -34,7 +34,7 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddPooledDbContextFactory<AppDbContext>(opts =>
-    opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    opts.UseNpgsql(PostgresConnectionString.Normalize(builder.Configuration.GetConnectionString("DefaultConnection")),
         npgsql => npgsql.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(3), errorCodesToAdd: null)));
 
 builder.Services.AddIdentityCore<User>()

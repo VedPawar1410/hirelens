@@ -52,10 +52,10 @@ services:
           name: hirelens-ai
           envVarKey: INTERNAL_API_KEY
       - key: ExternalApi__ParsingUrl
-        value: https://hirelens-ai.onrender.com
+        value: https://hirelens-ai-071s.onrender.com
       - key: ExternalApi__BaseUrl
-        value: https://hirelens-ai.onrender.com/generate-jd
+        value: https://hirelens-ai-071s.onrender.com/generate-jd
       - key: ExternalApi__PdfUrl
-        value: https://hirelens-ai.onrender.com/download-pdf
+        value: https://hirelens-ai-071s.onrender.com/download-pdf
       - key: ATSScoreGeneration__BaseUrl
-        value: https://hirelens-ai.onrender.com
+        value: https://hirelens-ai-071s.onrender.com
