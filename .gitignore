@@ -1,0 +1,37 @@
+# Secrets - never commit. Copy the *.example files instead.
+.env
+.env.*
+!.env.example
+appsettings.Development.json
+appsettings.*.local.json
+
+# Candidate data - resumes are personal data. Use the synthetic samples only.
+resumes_testing/
+**/local_testing/
+extraction_outputs/
+*.db
+
+# .NET
+bin/
+obj/
+.vs/
+*.user
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+coverage/
+
+# OS / editors / tools
+.DS_Store
+.idea/
+.vscode/
+*.log
+.claude/settings.local.json

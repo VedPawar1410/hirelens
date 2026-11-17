@@ -1,0 +1,429 @@
+<mxfile host="app.diagrams.net" version="24.7.6" type="device">
+  <diagram name="1 - System Architecture" id="p1">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="p1_title" value="HireLens - System Architecture" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="415" y="30" width="820" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_browser" value="Browser&#xa;Recruiter / Interviewer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="170" width="160" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_react" value="React Frontend :5173" style="swimlane;startSize=32;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="310" y="110" width="260" height="270" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_react_auth" value="Auth Feature" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="p1_react">
+          <mxGeometry x="25" y="50" width="210" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_react_rec" value="Recruitment Portal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="p1_react">
+          <mxGeometry x="25" y="95" width="210" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_react_int" value="Interviewer Portal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="p1_react">
+          <mxGeometry x="25" y="140" width="210" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_react_shared" value="Shared UI / Modals / Hooks" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="p1_react">
+          <mxGeometry x="25" y="185" width="210" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_react_api" value="API Layer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="p1_react">
+          <mxGeometry x="25" y="230" width="210" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_backend" value=".NET 10 Backend :5122" style="swimlane;startSize=32;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="660" y="90" width="330" height="360" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_be_ctrl" value="Controllers (7)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="p1_backend">
+          <mxGeometry x="25" y="50" width="125" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_be_domain" value="Domain Services" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="p1_backend">
+          <mxGeometry x="180" y="50" width="125" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_be_infra" value="Infra Services" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="p1_backend">
+          <mxGeometry x="25" y="115" width="125" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_be_worker" value="Background Worker&#xa;AtsScoreWorker + Channel&lt;AtsScoreJob&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="p1_backend">
+          <mxGeometry x="180" y="115" width="125" height="58" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_be_repo" value="Repositories" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="p1_backend">
+          <mxGeometry x="25" y="190" width="125" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_be_data" value="Data Access&#xa;EF Core" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="p1_backend">
+          <mxGeometry x="180" y="200" width="125" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_be_sse" value="SSE Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;" vertex="1" parent="p1_backend">
+          <mxGeometry x="25" y="260" width="280" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_python" value="Python FastAPI AI :8000" style="swimlane;startSize=32;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="120" width="250" height="250" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_py_score" value="ats_scoring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="p1_python">
+          <mxGeometry x="25" y="50" width="200" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_py_jd" value="jd_creation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="p1_python">
+          <mxGeometry x="25" y="90" width="200" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_py_resume" value="resume_extraction" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="p1_python">
+          <mxGeometry x="25" y="130" width="200" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_py_email" value="Email_sender" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="p1_python">
+          <mxGeometry x="25" y="170" width="200" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_py_api" value="api_server.py" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="p1_python">
+          <mxGeometry x="25" y="210" width="200" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_sql" value="Azure SQL&#xa;ATS relational data" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="735" y="565" width="140" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_blob" value="Azure Blob&#xa;PDFs / resumes" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="940" y="565" width="150" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_smtp" value="SMTP&#xa;notifications" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="585" width="150" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_legend" value="Legend" style="swimlane;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="80" y="760" width="440" height="210" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_leg1" value="Frontend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="p1_legend">
+          <mxGeometry x="25" y="45" width="170" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_leg2" value="Backend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="p1_legend">
+          <mxGeometry x="235" y="45" width="170" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_leg3" value="AI / Python" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="p1_legend">
+          <mxGeometry x="25" y="90" width="170" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_leg4" value="Data / Storage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="p1_legend">
+          <mxGeometry x="235" y="90" width="170" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_leg5" value="External" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="p1_legend">
+          <mxGeometry x="25" y="135" width="170" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_leg6" value="Shared / config / background" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="p1_legend">
+          <mxGeometry x="235" y="135" width="170" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_e1" value="renders" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" edge="1" source="p1_browser" target="p1_react" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_e2" value="REST API (HTTP)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" edge="1" source="p1_react" target="p1_backend" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_e3" value="SSE stream (ATS scores)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;dashed=1;strokeColor=#82b366;" edge="1" source="p1_backend" target="p1_react" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="510"/>
+              <mxPoint x="260" y="510"/>
+              <mxPoint x="260" y="245"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p1_e4" value="HTTP /score /generate /parse" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" edge="1" source="p1_backend" target="p1_python" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_e5" value="EF Core / SQL" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" edge="1" source="p1_backend" target="p1_sql" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_e6" value="blob upload/download" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" edge="1" source="p1_backend" target="p1_blob" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="p1_e7" value="SMTP notifications" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" edge="1" source="p1_backend" target="p1_smtp" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="2 - Frontend Feature Map" id="p2">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="p2_title" value="Frontend Feature Map" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="520" y="25" width="610" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_boot" value="main.tsx -> App.tsx -> QueryClientProvider -> AuthProvider -> ToastProvider -> RouterProvider" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="90" width="1350" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_auth" value="Auth Feature" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="70" y="190" width="250" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_auth_items" value="LoginPage&#xa;PanelSelector&#xa;LoginForm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=16;" vertex="1" parent="p2_auth">
+          <mxGeometry x="25" y="55" width="200" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_recruit" value="Recruitment Portal" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="360" y="190" width="620" height="630" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_rec_layout" value="RecruitmentLayout" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=12;fontStyle=1;" vertex="1" parent="p2_recruit">
+          <mxGeometry x="25" y="50" width="570" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_rec_dash" value="DashboardPage -> ApplicationVolumeChart | PipelineFunnelPanel | NeedsAttentionPanel | RecentJobFolders" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p2_recruit">
+          <mxGeometry x="25" y="100" width="570" height="58" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_rec_jd" value="JDCreationPage -> JDListSection | JDFormFields | LiveSummaryPanel | AssignInterviewerPanel | ReturnedDraftsSection | useJDForm | useJDMutations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p2_recruit">
+          <mxGeometry x="25" y="175" width="570" height="72" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_rec_jobs" value="JobsPage -> JobFolderDetailPage -> JobFolderHeader | CandidateListPane | StageRail | UploadResumeModal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p2_recruit">
+          <mxGeometry x="25" y="265" width="570" height="58" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_rec_cands" value="CandidatesPage -> CandidateDetailPage -> CandidateProfileHeader | PipelineCard | ScheduleInterviewCard | useColumnCandidates | useScheduleInterview" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p2_recruit">
+          <mxGeometry x="25" y="340" width="570" height="72" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_rec_api" value="API: candidatesApi | interviewsApi | jdApi | resumeApi | jobsApi | dashboardApi" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p2_recruit">
+          <mxGeometry x="25" y="435" width="570" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_interviewer" value="Interviewer Portal" style="swimlane;startSize=30;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="190" width="570" height="500" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_int_layout" value="InterviewerLayout" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=12;fontStyle=1;" vertex="1" parent="p2_interviewer">
+          <mxGeometry x="25" y="50" width="520" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_int_dash" value="DashboardPage -> StatsPanel | WeekStrip | TypeIcon" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p2_interviewer">
+          <mxGeometry x="25" y="105" width="520" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_int_jd" value="JDCreationPage -> DraftListView | DraftDetailView" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p2_interviewer">
+          <mxGeometry x="25" y="178" width="520" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_int_mc" value="MyCandidatesPage -> CandidateGroup | FilterBar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p2_interviewer">
+          <mxGeometry x="25" y="251" width="520" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_int_detail" value="CandidateDetailPage -> FeedbackSection | CandidateHeader" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p2_interviewer">
+          <mxGeometry x="25" y="324" width="520" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_int_hook" value="Hooks: useInterviewerData | useInterviewDetailModal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p2_interviewer">
+          <mxGeometry x="25" y="397" width="520" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_shared" value="Shared Library" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="70" y="860" width="1520" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_shared_ui" value="components/ui: GlowOrb | NoteComposer | InterviewRoundsEditor | MatchBadge | PipelineBar | Sparkline | StatusBadge | BezelCard | StatCard | Avatar | ActionButton | Spinner | FeedbackFormFields | UploadProgressBanner" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="p2_shared">
+          <mxGeometry x="25" y="45" width="700" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_shared_modals" value="components/modals: JDPreviewModal | InterviewScheduleModal | RescheduleInterviewModal | ConfigureRoundsModal | CandidateSelectionModal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="p2_shared">
+          <mxGeometry x="765" y="45" width="720" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_shared_hooks" value="hooks: useAuth | usePdfBlobUrl | useBreakpoints | useToast | useLoginAnimation | useWindowSize&#xa;context: AuthContext | UploadProgressContext" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="p2_shared">
+          <mxGeometry x="25" y="115" width="700" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_shared_api" value="api: apiClient | authApi&#xa;types: index.ts (Candidate | Job | Interview | CandidateNote | JobRound | SkippedRound | CandidateStatus...) | api.ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="p2_shared">
+          <mxGeometry x="765" y="115" width="720" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_shared_lib" value="lib: stageUtils | candidateUtils | dateUtils | matchScoreUtils | queryClient&#xa;constants: interviewConstants (ROUND_TYPE_OPTIONS | DEFAULT_INTERVIEW_ROUNDS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="p2_shared">
+          <mxGeometry x="25" y="185" width="1460" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2_e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" source="p2_boot" target="p2_auth" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p2_e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" source="p2_boot" target="p2_recruit" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p2_e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;" edge="1" source="p2_boot" target="p2_interviewer" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="3 - Backend Architecture" id="p3">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="p3_title" value="Backend Architecture - Layered View" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="455" y="25" width="740" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_middleware" value="Middleware: JWT Auth | GlobalExceptionHandler | CORS | camelCase JSON (JsonNamingPolicy.CamelCase)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="90" width="1110" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_ctrl" value="Layer 1 - HTTP / Controllers" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="185" width="1110" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_ctrl_items" value="AuthController | CandidateController | DashboardController | InterviewsController | JobController | JobFolderController | ResumeController" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=12;" vertex="1" parent="p3_ctrl">
+          <mxGeometry x="25" y="52" width="1060" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_domain" value="Layer 2 - Domain Services" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="345" width="1110" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_domain_items" value="AuthService | CandidateService | DashboardService | InterviewService | JobService | JobFolderService | ResumeService | CandidateNoteService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=12;" vertex="1" parent="p3_domain">
+          <mxGeometry x="25" y="55" width="1060" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_infra" value="Layer 2b - Infrastructure Services" style="swimlane;startSize=30;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="510" width="1110" height="135" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_infra_items" value="BlobService | TokenService | HashService | SseService | ExternalApiService | ParsingService | CategorizationService | InterviewEmailNotificationService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="p3_infra">
+          <mxGeometry x="25" y="55" width="1060" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_bg" value="Layer 2c - Background" style="swimlane;startSize=30;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="680" width="1110" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_channel" value="Channel&lt;AtsScoreJob&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="p3_bg">
+          <mxGeometry x="255" y="55" width="230" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_worker" value="AtsScoreWorker (IHostedService)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="p3_bg">
+          <mxGeometry x="625" y="55" width="260" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_repo" value="Layer 3 - Repositories" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="830" width="1110" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_repo_items" value="CandidateRepository | ApplicationRepository | DraftRepository" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="p3_repo">
+          <mxGeometry x="25" y="50" width="1060" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_data" value="Layer 4 - Data Access" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="120" y="970" width="1110" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_dbctx" value="AppDbContext (EF Core) -> Azure SQL Server (4 migrations)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="p3_data">
+          <mxGeometry x="25" y="45" width="1060" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_interfaces" value="Services/Interfaces&#xa;19 service interfaces" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="360" width="220" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_py" value="Python FastAPI :8000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="535" width="220" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_blob" value="Azure Blob Storage" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="635" width="220" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_smtp" value="SMTP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="760" width="220" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3_e1" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p3_middleware" target="p3_ctrl" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p3_e2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p3_ctrl" target="p3_domain" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p3_e3" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p3_domain" target="p3_infra" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p3_e4" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p3_infra" target="p3_bg" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p3_e5" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p3_bg" target="p3_repo" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p3_e6" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p3_repo" target="p3_data" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p3_e7" value="implemented by" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;fontSize=11;" edge="1" source="p3_interfaces" target="p3_domain" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p3_e8" value="ExternalApiService" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;" edge="1" source="p3_infra" target="p3_py" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p3_e9" value="BlobService" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;" edge="1" source="p3_infra" target="p3_blob" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p3_e10" value="InterviewEmailNotificationService" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;" edge="1" source="p3_infra" target="p3_smtp" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p3_e11" value="feeds" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;fontSize=11;" edge="1" source="p3_channel" target="p3_worker" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="4 - Key Data Flows" id="p4">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="p4_title" value="Key Data Flows" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="560" y="25" width="530" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="p4_flow1" value="Flow 1 - JD Creation &amp; Round Setup" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="50" y="90" width="1550" height="245" as="geometry"/>
+        </mxCell>
+        <mxCell id="p4_f1a" value="Recruiter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="p4_flow1"><mxGeometry x="25" y="85" width="105" height="42" as="geometry"/></mxCell>
+        <mxCell id="p4_f1b" value="Fill JD Form" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="p4_flow1"><mxGeometry x="160" y="85" width="125" height="42" as="geometry"/></mxCell>
+        <mxCell id="p4_f1c" value="Save Draft&#xa;status=draft" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="p4_flow1"><mxGeometry x="315" y="80" width="130" height="52" as="geometry"/></mxCell>
+        <mxCell id="p4_f1d" value="Assign Interviewers&#xa;+ Configure Rounds" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="p4_flow1"><mxGeometry x="475" y="76" width="155" height="60" as="geometry"/></mxCell>
+        <mxCell id="p4_f1e" value="Visible to interviewers&#xa;status=assigned" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="p4_flow1"><mxGeometry x="660" y="78" width="150" height="56" as="geometry"/></mxCell>
+        <mxCell id="p4_f1f" value="Interviewer fills&#xa;Role Description" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="p4_flow1"><mxGeometry x="840" y="76" width="145" height="60" as="geometry"/></mxCell>
+        <mxCell id="p4_f1g" value="Submit Back&#xa;status=returned" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="p4_flow1"><mxGeometry x="1015" y="80" width="130" height="52" as="geometry"/></mxCell>
+        <mxCell id="p4_f1h" value="Generate JD" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="p4_flow1"><mxGeometry x="1175" y="85" width="115" height="42" as="geometry"/></mxCell>
+        <mxCell id="p4_f1i" value="LLM&#xa;Python FastAPI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="p4_flow1"><mxGeometry x="1320" y="78" width="125" height="56" as="geometry"/></mxCell>
+        <mxCell id="p4_f1j" value="Preview -> Approve&#xa;Finalize + PDF blob" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="p4_flow1"><mxGeometry x="655" y="170" width="230" height="48" as="geometry"/></mxCell>
+        <mxCell id="p4_flow2" value="Flow 2 - Resume Upload &amp; ATS Scoring (SSE)" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="50" y="380" width="1550" height="315" as="geometry"/>
+        </mxCell>
+        <mxCell id="p4_f2a" value="Recruiter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="20" y="55" width="90" height="38" as="geometry"/></mxCell>
+        <mxCell id="p4_f2b" value="POST /api/resumes/upload&#xa;multipart files + jobId" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="135" y="48" width="170" height="52" as="geometry"/></mxCell>
+        <mxCell id="p4_f2c" value="ResumeController" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="330" y="55" width="125" height="38" as="geometry"/></mxCell>
+        <mxCell id="p4_f2d" value="CategorizationService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="480" y="55" width="145" height="38" as="geometry"/></mxCell>
+        <mxCell id="p4_f2e" value="HashService&#xa;dedup" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="650" y="50" width="115" height="48" as="geometry"/></mxCell>
+        <mxCell id="p4_f2f" value="ParsingService&#xa;Python /parse" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="790" y="50" width="125" height="48" as="geometry"/></mxCell>
+        <mxCell id="p4_f2g" value="BlobService&#xa;Azure Blob" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="940" y="50" width="125" height="48" as="geometry"/></mxCell>
+        <mxCell id="p4_f2h" value="Create Candidate&#xa;+ Application" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="1090" y="50" width="135" height="48" as="geometry"/></mxCell>
+        <mxCell id="p4_f2i" value="Enqueue&#xa;Channel&lt;AtsScoreJob&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="1250" y="48" width="145" height="52" as="geometry"/></mxCell>
+        <mxCell id="p4_f2j" value="AtsScoreWorker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="1250" y="145" width="145" height="38" as="geometry"/></mxCell>
+        <mxCell id="p4_f2k" value="ExternalApiService&#xa;Python /score" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="1088" y="140" width="140" height="48" as="geometry"/></mxCell>
+        <mxCell id="p4_f2l" value="Update Application.AtsScore" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="888" y="145" width="175" height="38" as="geometry"/></mxCell>
+        <mxCell id="p4_f2m" value="SseService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="740" y="145" width="120" height="38" as="geometry"/></mxCell>
+        <mxCell id="p4_f2n" value="GET /api/candidates/stream?jobId=" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="495" y="145" width="210" height="38" as="geometry"/></mxCell>
+        <mxCell id="p4_f2o" value="Frontend score event&#xa;real-time badge update" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="p4_flow2"><mxGeometry x="270" y="140" width="185" height="48" as="geometry"/></mxCell>
+        <mxCell id="p4_f2sent" value="Score sentinels: null=unscored | -1=pending | negative=failed | 0-100=match%" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1;" vertex="1" parent="p4_flow2"><mxGeometry x="285" y="235" width="980" height="38" as="geometry"/></mxCell>
+        <mxCell id="p4_flow3" value="Flow 3 - Interview Scheduling, Skip &amp; Reschedule" style="swimlane;startSize=30;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="50" y="740" width="1550" height="370" as="geometry"/>
+        </mxCell>
+        <mxCell id="p4_f3a" value="Recruiter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="p4_flow3"><mxGeometry x="25" y="55" width="95" height="38" as="geometry"/></mxCell>
+        <mxCell id="p4_f3b" value="InterviewScheduleModal&#xa;fetch rounds from getDraftById" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="p4_flow3"><mxGeometry x="145" y="48" width="190" height="52" as="geometry"/></mxCell>
+        <mxCell id="p4_f3c" value="POST /api/interviews/schedule-round&#xa;resumeBase64 + jdBase64" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="p4_flow3"><mxGeometry x="365" y="48" width="210" height="52" as="geometry"/></mxCell>
+        <mxCell id="p4_f3d" value="InterviewService creates&#xa;Interview + roundName snapshot" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="p4_flow3"><mxGeometry x="605" y="48" width="190" height="52" as="geometry"/></mxCell>
+        <mxCell id="p4_f3e" value="InterviewEmailNotificationService&#xa;SMTP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="p4_flow3"><mxGeometry x="825" y="48" width="205" height="52" as="geometry"/></mxCell>
+        <mxCell id="p4_f3f" value="502 if email fails;&#xa;interview still created" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="p4_flow3"><mxGeometry x="1060" y="48" width="170" height="52" as="geometry"/></mxCell>
+        <mxCell id="p4_f3g" value="Frontend updates&#xa;ScheduleInterviewCard / PipelineCard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="p4_flow3"><mxGeometry x="1260" y="48" width="220" height="52" as="geometry"/></mxCell>
+        <mxCell id="p4_f3skip" value="Skip: inline Skip -> POST /api/interviews/skip-round {candidateId, jobId, round} -> Application.SkippedRounds JSON -> {skippedRounds: int[]}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p4_flow3"><mxGeometry x="145" y="150" width="1280" height="55" as="geometry"/></mxCell>
+        <mxCell id="p4_f3res" value="Reschedule: RescheduleInterviewModal -> PATCH /api/interviews/:id/reschedule -> re-sends notification email" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=12;" vertex="1" parent="p4_flow3"><mxGeometry x="145" y="225" width="1280" height="48" as="geometry"/></mxCell>
+        <mxCell id="p4_f3gate" value="Stage Gate: canMoveToSelected = all configured rounds are Completed or Skipped" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;" vertex="1" parent="p4_flow3"><mxGeometry x="365" y="300" width="820" height="42" as="geometry"/></mxCell>
+        <mxCell id="p4_e1" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f1a" target="p4_f1b" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e2" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f1b" target="p4_f1c" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e3" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f1c" target="p4_f1d" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e4" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f1d" target="p4_f1e" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e5" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f1e" target="p4_f1f" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e6" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f1f" target="p4_f1g" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e7" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f1g" target="p4_f1h" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e8" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f1h" target="p4_f1i" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e9" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f1i" target="p4_f1j" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e10" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2a" target="p4_f2b" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e11" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2b" target="p4_f2c" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e12" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2c" target="p4_f2d" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e13" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2d" target="p4_f2e" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e14" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2e" target="p4_f2f" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e15" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2f" target="p4_f2g" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e16" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2g" target="p4_f2h" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e17" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2h" target="p4_f2i" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e18" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2i" target="p4_f2j" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e19" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2j" target="p4_f2k" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e20" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2k" target="p4_f2l" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e21" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2l" target="p4_f2m" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e22" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2m" target="p4_f2n" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e23" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f2n" target="p4_f2o" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e24" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f3a" target="p4_f3b" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e25" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f3b" target="p4_f3c" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e26" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f3c" target="p4_f3d" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e27" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f3d" target="p4_f3e" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e28" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f3e" target="p4_f3f" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p4_e29" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" edge="1" source="p4_f3f" target="p4_f3g" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="5 - Database Schema" id="p5">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="p5_title" value="Database Schema - ER Diagram" style="text;html=1;strokeColor=none;fillColor=none;fontSize=26;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="495" y="25" width="660" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5_user" value="User&#xa;id&#xa;userName&#xa;passwordHash&#xa;email&#xa;role (Recruiter/Interviewer)" style="swimlane;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="120" width="260" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5_job" value="Job&#xa;id&#xa;title&#xa;status (draft/assigned/returned/finalized)&#xa;folderStatus (active/paused/closed)&#xa;interviewRounds: JSON List&lt;JobRound&gt;&#xa;createdBy -> User" style="swimlane;startSize=28;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="95" width="330" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5_jobround" value="JobRound (owned JSON)&#xa;Order&#xa;Name&#xa;Type" style="swimlane;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="120" width="250" height="145" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5_candidate" value="Candidate&#xa;id&#xa;name&#xa;email&#xa;phone" style="swimlane;startSize=28;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="440" width="260" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5_application" value="Application&#xa;id&#xa;jobId -> Job&#xa;candidateId -> Candidate&#xa;stage (CandidateStatus)&#xa;atsScore (int?)&#xa;skippedRounds: JSON List&lt;SkippedRound&gt;" style="swimlane;startSize=28;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="400" width="330" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5_skipped" value="SkippedRound (owned JSON)&#xa;Round&#xa;SkippedBy&#xa;SkippedAt" style="swimlane;startSize=28;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="440" width="250" height="145" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5_note" value="CandidateNote&#xa;id (Guid)&#xa;candidateId -> Candidate&#xa;authorId -> User&#xa;authorName&#xa;text&#xa;createdAt" style="swimlane;startSize=28;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="750" width="300" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5_interview" value="Interview&#xa;id&#xa;applicationId -> Application&#xa;round (int)&#xa;roundName (snapshot)&#xa;scheduledAt&#xa;status (Scheduled/Completed/Cancelled/NoShow)&#xa;interviewerId -> User" style="swimlane;startSize=28;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="500" y="735" width="360" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5_resume" value="Resume&#xa;id&#xa;jobId -> Job&#xa;fileName&#xa;blobUrl&#xa;contentHash" style="swimlane;startSize=28;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="930" y="735" width="270" height="165" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5_status" value="CandidateStatus enum&#xa;under_review | filtered | shortlisted | interviewing | selected | rejected" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="440" width="280" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5_rel1" value="1 creates *" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;fontSize=11;" edge="1" source="p5_user" target="p5_job" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p5_rel2" value="1 has *" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;fontSize=11;" edge="1" source="p5_job" target="p5_application" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p5_rel3" value="1 has *" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;fontSize=11;" edge="1" source="p5_candidate" target="p5_application" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p5_rel4" value="1 has *" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;fontSize=11;" edge="1" source="p5_application" target="p5_interview" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p5_rel5" value="1 has *" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;fontSize=11;" edge="1" source="p5_candidate" target="p5_note" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p5_rel6" value="1 authors *" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;fontSize=11;" edge="1" source="p5_user" target="p5_note" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p5_rel7" value="1 interviewer *" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;fontSize=11;" edge="1" source="p5_user" target="p5_interview" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p5_rel8" value="1 has *" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;fontSize=11;" edge="1" source="p5_job" target="p5_resume" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p5_rel9" value="JSON owned" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;fontSize=11;" edge="1" source="p5_job" target="p5_jobround" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p5_rel10" value="JSON owned" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;fontSize=11;" edge="1" source="p5_application" target="p5_skipped" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="p5_rel11" value="stage enum" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;fontSize=11;" edge="1" source="p5_application" target="p5_status" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
