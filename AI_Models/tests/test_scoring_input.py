@@ -131,3 +131,20 @@ def test_llm_client_retries_transient_errors_on_the_same_provider(monkeypatch):
 
     assert text == "ok"
     assert len(client.urls) == 2 and all("groq.com" in u for u in client.urls)
+
+
+def test_name_is_extracted_from_a_name_dash_headline_first_line():
+    from resume_extraction.parser import ContactInfoParser
+    for text, expected in [
+        ("Morgan Vale - Graphic Designer, 4 years.\nBrand identities in Illustrator.", "Morgan Vale"),
+        ("Dana Okafor | Frontend Engineer\ndana@example.com", "Dana Okafor"),
+        ("Avery Stone, Backend Engineer, 5 years\nPython, FastAPI", "Avery Stone"),
+    ]:
+        name, _method = ContactInfoParser.extract_name(text)
+        assert name == expected, (text, name)
+
+
+def test_name_split_does_not_turn_a_job_title_into_a_name():
+    from resume_extraction.parser import ContactInfoParser
+    name, _ = ContactInfoParser.extract_name("Senior Backend Engineer - 5 years\nPython, FastAPI, PostgreSQL")
+    assert name is None

@@ -19,7 +19,9 @@ export function ChartSvg({ uid, data, svgSize, isMobile, hoveredIndex, animKey, 
   const CHART_H = SVG_H - MARGIN.top - MARGIN.bottom
 
   const maxVal = niceMax(Math.max(...data.map(d => d.apps), 1))
-  const gridLines = [0.25, 0.5, 0.75, 1].map(r => Math.round(maxVal * r))
+  // Rounded quarter marks collide when maxVal is small (empty dashboard: 1, 1, 2, 2),
+  // which drew overlapping labels and gave React duplicate keys. Keep each value once.
+  const gridLines = [...new Set([0.25, 0.5, 0.75, 1].map(r => Math.round(maxVal * r)))]
   const n = data.length
   const spacing = n > 1 ? CHART_W / (n - 1) : CHART_W
   const step = labelStep(n)

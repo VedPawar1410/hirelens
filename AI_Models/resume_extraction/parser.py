@@ -207,8 +207,9 @@ class ContactInfoParser:
         if any(char.isdigit() for char in line):
             return False
             
-        # Rejects lines with common resume separators/symbols (–, —, →, |, ·, &, ●, ■)
-        if any(char in "@+:/()–—|_→₹·&●■" for char in line):
+        # Rejects lines with common resume separators/symbols (–, —, →, |, ·, &, ●, ■) and commas:
+        # without the comma rule a skills line like "Python, FastAPI" passed as a person's name.
+        if any(char in "@+:/()–—|_→₹·&●■," for char in line):
             return False
 
         words = line.split()
@@ -417,6 +418,14 @@ class ContactInfoParser:
             for i in range(min(15, len(lines))):
                 if ContactInfoParser._is_likely_name(lines[i], common_headers):
                     return lines[i], "Top Search (Heuristic)"
+
+            # Strategy 6b: "Name - Headline" first lines (e.g. "Jordan Lee - Backend Engineer, 4 years").
+            # The whole line fails the strict checks (digits, separators), so test the part before
+            # the first headline separator. Only the top lines, where a name actually sits.
+            for line in lines[:5]:
+                head = re.split(r"\s[-–—|]\s|,", line, maxsplit=1)[0].strip()
+                if head != line and ContactInfoParser._is_likely_name(head, common_headers):
+                    return head, "Top Search (Headline Split)"
 
             # Strategy 7: Global Strict Search (Last Resort)
             for line in lines:

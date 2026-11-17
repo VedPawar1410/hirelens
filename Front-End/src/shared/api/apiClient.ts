@@ -99,7 +99,10 @@ export async function apiFetchEventStream<T>(
     ...options,
     credentials: 'include',
     headers,
-  }).catch(() => {
+  }).catch((error: unknown) => {
+    // An intentional abort (unsubscribe) must stay an AbortError so callers can ignore it;
+    // only real network failures become ApiError(0).
+    if ((error as DOMException)?.name === 'AbortError') throw error
     throw new ApiError('No connection, check your network', 0)
   })
 

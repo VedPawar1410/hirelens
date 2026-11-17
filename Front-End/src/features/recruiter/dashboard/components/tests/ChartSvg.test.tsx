@@ -10,6 +10,21 @@ describe('ChartSvg', () => {
     { day: 'Wed', apps: 6 },
   ]
 
+  it('renders an all-zero week without duplicate gridline keys (empty dashboard)', () => {
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const empty = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => ({ day, apps: 0 }))
+    render(
+      <ChartSvg
+        uid="u0" data={empty} svgSize={{ w: 320, h: 180 }} isMobile={false}
+        hoveredIndex={null} animKey="z" lineRef={createRef<SVGPathElement>()}
+        onHoverChange={vi.fn()}
+      />,
+    )
+    const keyErrors = errors.mock.calls.filter(args => String(args[0]).includes('same key'))
+    errors.mockRestore()
+    expect(keyErrors).toHaveLength(0)
+  })
+
   it('renders the svg with the configured viewBox', () => {
     const { container } = render(
       <ChartSvg

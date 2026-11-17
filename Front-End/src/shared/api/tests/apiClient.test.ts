@@ -302,11 +302,18 @@ describe('subscribeEventStream', () => {
     unsubscribe()
   })
 
-  // KNOWN BUG: apiClient.ts:55-57 catches *any* fetch rejection and rethrows as
-  // ApiError(0), so AbortError is masked. subscribeEventStream's `name !== 'AbortError'`
-  // check therefore never matches on intentional aborts and onError fires spuriously.
-  // Fix: in the .catch handler, detect AbortError and rethrow it as-is.
-  it.skip('SKIPPED — source bug: onError fires on intentional abort because AbortError is masked by ApiError(0)', () => {})
+  it('does not call onError when the stream is intentionally aborted (unsubscribe)', async () => {
+    fetchSpy.mockImplementation(
+      (_url: RequestInfo | URL, init?: RequestInit) => new Promise((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')))
+      }),
+    )
+    const onError = vi.fn()
+    const unsubscribe = subscribeEventStream('/stream', () => undefined, onError)
+    unsubscribe()
+    await new Promise(resolve => setTimeout(resolve, 0))
+    expect(onError).not.toHaveBeenCalled()
+  })
 
   it('invokes onError for non-abort errors', async () => {
     fetchSpy.mockRejectedValue(new TypeError('network down'))
