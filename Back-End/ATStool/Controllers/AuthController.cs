@@ -4,6 +4,7 @@ using ATStool.DTOs.Auth;
 using ATStool.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using ATStool.Constants;
 
 namespace ATStool.Controllers
 {
@@ -18,7 +19,10 @@ namespace ATStool.Controllers
             _authService = authService;
         }
 
+        // Only an admin may create accounts. The first admin is seeded at startup
+        // from configuration (Seed:AdminPassword) - see SeedUsers in Program.cs.
         [HttpPost("register")]
+        [Authorize(Roles = AppRoles.Admin)]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             if (!ModelState.IsValid)

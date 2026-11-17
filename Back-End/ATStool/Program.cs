@@ -145,6 +145,7 @@ builder.Services
 var app = builder.Build();
 
 await SeedRoles(app);
+await SeedUsers(app);
 
 // ── Middleware pipeline (order matters) ───────────────────────────────────────
 app.UseMiddleware<GlobalExceptionHandler>(); // must be first to catch all exceptions
@@ -163,4 +164,40 @@ static async Task SeedRoles(WebApplication app)
     foreach (var role in new[] { AppRoles.Admin, AppRoles.Recruitment, AppRoles.Interviewer })
         if (!await roleManager.RoleExistsAsync(role))
             await roleManager.CreateAsync(new IdentityRole(role));
+}
+
+// ── User seeding ──────────────────────────────────────────────────────────────
+// Registration is admin-only, so the first accounts come from configuration
+// (env vars Seed__AdminPassword / Seed__DemoPassword). An account is created only
+// when its password is set and the username is free; existing users are never touched.
+static async Task SeedUsers(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var config = app.Configuration;
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    var seeds = new[]
+    {
+        (UserName: "admin",            FullName: "HireLens Admin",   Role: AppRoles.Admin,       Password: config["Seed:AdminPassword"]),
+        (UserName: "demo.recruiter",   FullName: "Demo Recruiter",   Role: AppRoles.Recruitment, Password: config["Seed:DemoPassword"]),
+        (UserName: "demo.interviewer", FullName: "Demo Interviewer", Role: AppRoles.Interviewer, Password: config["Seed:DemoPassword"]),
+    };
+
+    foreach (var seed in seeds)
+    {
+        if (string.IsNullOrWhiteSpace(seed.Password) || await userManager.FindByNameAsync(seed.UserName) != null)
+            continue;
+
+        await authService.RegisterAsync(new ATStool.DTOs.Auth.RegisterDto
+        {
+            UserName = seed.UserName,
+            FullName = seed.FullName,
+            Email = $"{seed.UserName}@example.com",
+            Password = seed.Password,
+            UserType = seed.Role,
+        });
+        logger.LogInformation("Seeded user {UserName} ({Role})", seed.UserName, seed.Role);
+    }
 }
