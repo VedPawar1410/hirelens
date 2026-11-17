@@ -94,8 +94,10 @@ builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddSingleton<IBlobService, DbBlobService>(); // files live in Postgres (StoredFiles)
 // Every client that calls the Python AI service sends the shared X-Internal-Key header.
 builder.Services.AddTransient<AiServiceKeyHandler>();
+// ...and retries 502/503/504 for up to ~75 s while a sleeping free-tier AI service wakes up.
+builder.Services.AddTransient<AiWakeRetryHandler>();
 builder.Services.AddHttpClient<IExternalApiService, ExternalApiService>()
-    .AddHttpMessageHandler<AiServiceKeyHandler>();
+    .AddHttpMessageHandler<AiServiceKeyHandler>().AddHttpMessageHandler<AiWakeRetryHandler>();
 builder.Services.AddScoped<GlobalExceptionHandler>();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<ICategorizationService, CategorizationService>();
@@ -112,14 +114,14 @@ builder.Services.AddHttpClient<IInterviewEmailNotificationService, InterviewEmai
     var baseUrl = builder.Configuration["ExternalApi:ParsingUrl"]
         ?? "http://localhost:8000";
     client.BaseAddress = new Uri(baseUrl);
-    client.Timeout = TimeSpan.FromSeconds(30);
-}).AddHttpMessageHandler<AiServiceKeyHandler>();
+    client.Timeout = TimeSpan.FromSeconds(100); // covers a ~30 s wake-up plus retries
+}).AddHttpMessageHandler<AiServiceKeyHandler>().AddHttpMessageHandler<AiWakeRetryHandler>();
 
 builder.Services.AddHttpClient<IParsingService, ParsingService>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ExternalApi:ParsingUrl"]);
     client.Timeout = TimeSpan.FromMinutes(10);
-}).AddHttpMessageHandler<AiServiceKeyHandler>();
+}).AddHttpMessageHandler<AiServiceKeyHandler>().AddHttpMessageHandler<AiWakeRetryHandler>();
 
 // ── ATS Scoring queue — Channel + Worker + SSE ────────────────────────────────
 builder.Services.AddSingleton(_ =>
@@ -135,7 +137,7 @@ builder.Services.AddHttpClient("AtsScoreClient", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ATSScoreGeneration:BaseUrl"]!);
     client.Timeout = TimeSpan.FromMinutes(10);
-}).AddHttpMessageHandler<AiServiceKeyHandler>();
+}).AddHttpMessageHandler<AiServiceKeyHandler>().AddHttpMessageHandler<AiWakeRetryHandler>();
 
 builder.Services.AddHostedService<AtsScoreWorker>();
 
