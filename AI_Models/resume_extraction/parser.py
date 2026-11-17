@@ -21,6 +21,11 @@ import spacy
 
 logger = logging.getLogger(__name__)
 
+# `content` is what the ATS scorer reads, so it must hold the whole resume.
+# The cap only guards against pathological files (a 2-page resume is ~4-9k chars);
+# ~20k chars is ~5k tokens, well inside every provider's context window.
+MAX_RESUME_CHARS = 20_000
+
 # Cache for spaCy NLP model to avoid reloading
 _nlp_cache = None
 
@@ -475,8 +480,12 @@ class ResumeParser:
                 "phone": ContactInfoParser.extract_phone(text),
                 "linkedin": ContactInfoParser.extract_linkedin(text),
                 "github": ContactInfoParser.extract_github(text),
-                "content": text[:1000] if len(text) > 1000 else text  
+                "content": text[:MAX_RESUME_CHARS],
             }
+            if len(text) > MAX_RESUME_CHARS:
+                logger.warning(
+                    f"Resume text is {len(text)} chars; scoring the first {MAX_RESUME_CHARS}"
+                )
             
             logger.info(f"Successfully parsed resume: {parsed.get('name', 'Unknown')} using {method}")
             return parsed

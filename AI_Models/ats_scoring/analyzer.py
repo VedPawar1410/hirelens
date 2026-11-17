@@ -18,6 +18,12 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 
+# The structured answer is JSON with two lists (key_matches, key_gaps). 400 tokens
+# could cut it off mid-list, which fails JSON parsing and silently drops the
+# breakdown via the plain-number fallback. 1024 leaves comfortable headroom.
+STRUCTURED_MAX_TOKENS = 1024
+
+
 def compute_final_score(overall_score: float) -> int:
     """Clamp and round the LLM overall score into a final integer 0–100."""
     return int(max(0, min(100, round(overall_score))))
@@ -226,7 +232,7 @@ Example: 75
                 "model": ATSAnalyzer.NVIDIA_MODEL,
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 0.1,
-                "max_tokens": 400 if use_structured else 10,
+                "max_tokens": STRUCTURED_MAX_TOKENS if use_structured else 10,
             }
 
             response = await ATSAnalyzer._http_client.post(
@@ -271,7 +277,7 @@ Example: 75
                 "model": ATSAnalyzer.GROQ_MODEL,
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 0.1,
-                "max_tokens": 400 if use_structured else 10,
+                "max_tokens": STRUCTURED_MAX_TOKENS if use_structured else 10,
             }
 
             response = await ATSAnalyzer._http_client.post(
@@ -316,7 +322,7 @@ Example: 75
                 "model": ATSAnalyzer.OPENROUTER_MODEL,
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 0.1,
-                "max_tokens": 400 if use_structured else 10,
+                "max_tokens": STRUCTURED_MAX_TOKENS if use_structured else 10,
             }
 
             response = await ATSAnalyzer._http_client.post(
