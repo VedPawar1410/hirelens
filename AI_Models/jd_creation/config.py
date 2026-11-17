@@ -10,10 +10,3 @@ ABOUT_US = (
 )
 
 ABOUT_US_SHORT = "At Acme Corp, we are a community of builders creating world-class products."
-
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-API_TIMEOUT = 30
-API_MAX_TOKENS = 2000
-API_TEMPERATURE = 0.7
-HTTP_REFERER = "https://github.com/VedPawar1410/hirelens"
-X_TITLE = "HireLens JD Generator"

@@ -64,26 +64,70 @@ def test_parse_structured_response_rejects_truncated_or_incomplete_json():
 
 
 class _FakeResponse:
-    status_code = 200
+    def __init__(self, status=200, content="{}"):
+        self.status_code = status
+        self._content = content
+        self.text = content
 
     def json(self):
-        return {"choices": [{"message": {"content": "{}"}}]}
+        return {"choices": [{"message": {"content": self._content}, "finish_reason": "stop"}]}
 
 
 class _RecordingClient:
+    """Hard-fails the first provider (401, not retryable), answers from the second."""
+
     def __init__(self):
-        self.payloads = []
+        self.calls = []
 
     async def post(self, url, json, headers):
-        self.payloads.append(json)
-        return _FakeResponse()
+        self.calls.append((url, json))
+        return _FakeResponse(401, "bad key") if len(self.calls) == 1 else _FakeResponse(200, '{"ok": 1}')
 
 
-def test_structured_request_leaves_room_for_the_json_answer(monkeypatch):
+def test_llm_client_falls_back_from_groq_to_gemini(monkeypatch):
+    import llm_client
+    monkeypatch.setenv("GROQ_API_KEY", "g-test")
+    monkeypatch.setenv("GEMINI_API_KEY", "m-test")
     client = _RecordingClient()
-    monkeypatch.setattr(ATSAnalyzer, "_http_client", client)
-    monkeypatch.setattr(ATSAnalyzer, "GROQ_API_KEY", "test-key")
 
-    asyncio.run(ATSAnalyzer._call_groq("resume", "jd", use_structured=True))
+    text = asyncio.run(llm_client.achat([{"role": "user", "content": "hi"}],
+                                        max_tokens=STRUCTURED_MAX_TOKENS, json_mode=True, client=client))
 
-    assert client.payloads[0]["max_tokens"] == STRUCTURED_MAX_TOKENS >= 1024
+    assert text == '{"ok": 1}'
+    assert "groq.com" in client.calls[0][0] and "googleapis.com" in client.calls[1][0]
+    body = client.calls[0][1]
+    assert body["max_tokens"] == STRUCTURED_MAX_TOKENS >= 2048
+    assert body["response_format"] == {"type": "json_object"}
+    assert body["reasoning_effort"] == "low"
+
+
+def test_llm_client_skips_providers_without_keys(monkeypatch):
+    import llm_client
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    monkeypatch.setenv("GEMINI_API_KEY", "m-test")
+
+    assert [p["name"] for p in llm_client.configured_providers()] == ["gemini"]
+
+
+class _FlakyClient:
+    """First call: 503 (transient). Second call: success."""
+
+    def __init__(self):
+        self.urls = []
+
+    async def post(self, url, json, headers):
+        self.urls.append(url)
+        return _FakeResponse(503, "busy") if len(self.urls) == 1 else _FakeResponse(200, "ok")
+
+
+def test_llm_client_retries_transient_errors_on_the_same_provider(monkeypatch):
+    import llm_client
+    monkeypatch.setenv("GROQ_API_KEY", "g-test")
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.setattr(llm_client, "RETRY_DELAY_SECONDS", 0)
+    client = _FlakyClient()
+
+    text = asyncio.run(llm_client.achat([{"role": "user", "content": "hi"}], max_tokens=64, client=client))
+
+    assert text == "ok"
+    assert len(client.urls) == 2 and all("groq.com" in u for u in client.urls)

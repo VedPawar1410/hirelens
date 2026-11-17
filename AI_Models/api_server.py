@@ -272,12 +272,6 @@ async def generate_jd(request: JDRequest):
     try:
         logger.info(f"Received request to generate JD for: {request.jobTitle}")
         
-        # Validate that OpenRouter API key is configured
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        if not api_key:
-            logger.error("OPENROUTER_API_KEY not found in .env")
-            raise ValueError("API key not configured. Please set OPENROUTER_API_KEY in .env")
-        
         # Convert camelCase (from Frontend/Backend) to snake_case (for jd_generator.py)
         # Intelligently map compensation based on role type
         experience_level = request.experienceLevel.lower() if request.experienceLevel else None
@@ -862,7 +856,6 @@ async def startup_event():
         limits=httpx.Limits(max_connections=20, max_keepalive_connections=10)
     )
     # Async primitives must be created inside a running event loop
-    ATSAnalyzer._nvidia_lock = asyncio.Lock()
     ATSProcessor._semaphore = asyncio.Semaphore(ATSProcessor.CONCURRENCY_LIMIT)
 
     logger.info("JD Generator API startup complete")

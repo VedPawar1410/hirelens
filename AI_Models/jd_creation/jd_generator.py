@@ -2,7 +2,7 @@
  
 import os
 import json
-import requests
+import llm_client
 import re
 from dotenv import load_dotenv
 from typing import Dict, Any
@@ -17,36 +17,11 @@ load_dotenv(override=True)
 class JDGenerator:
     ABOUT_US_TEXT = "At Acme Corp, we are more than just a team – we are a product development community driven by a shared vision. Our values shape who we are, what we do, and how we interact with our peers and our customers. We're not just seeking any regular engineer; we want individuals who identify with our core values and are passionate about software development."
  
-    def __init__(self, provider: str = None):
-        # Quick Switcher: Change this to 'groq' to switch to Groq model at once
-        # Or set DEFAULT_PROVIDER in .env
-        self.provider = provider or os.getenv("DEFAULT_PROVIDER", "openrouter").lower()
-       
-        # OpenRouter Configuration
-        self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
-        self.openrouter_model = os.getenv("OPENROUTER_MODEL", "openrouter/free")
-        self.openrouter_fallback = os.getenv("OPENROUTER_FALLBACK_MODEL", "openai/gpt-4o-mini")
-        self.openrouter_url = "https://openrouter.ai/api/v1/chat/completions"
-       
-        # Groq Configuration
-        self.groq_api_key = os.getenv("GROQ_API_KEY")
-        self.groq_model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
-        self.groq_url = "https://api.groq.com/openai/v1/chat/completions"
- 
-        # Set active credentials based on provider
-        if self.provider == "groq":
-            self.api_key = self.groq_api_key
-            self.model = self.groq_model
-            self.api_url = self.groq_url
-        else:
-            self.api_key = self.openrouter_api_key
-            self.model = self.openrouter_model
-            self.api_url = self.openrouter_url
-            self.fallback_model = self.openrouter_fallback
-       
-        if not self.api_key:
-            raise ValueError(f"{self.provider.upper()}_API_KEY not found in .env file")
-   
+    def __init__(self):
+        # No API key is checked here: PDF rendering needs no LLM. generate_jd() goes
+        # through llm_client (Groq -> Gemini) and fails clearly if no provider is configured.
+        pass
+
     def load_prompt_template(self, template_path: str = "jd_prompt_template.md") -> str:
         """Load the JD prompt template from file"""
         try:
@@ -217,108 +192,16 @@ Role Details & Responsibilities:
 5. Generate ONLY the JD content (no preamble or explanations)
 6. Maintain consistent formatting throughout"""
        
-        # Prepare request headers
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-        }
-       
-        # Provider specific headers
-        if self.provider == "openrouter":
-            headers.update({
-                "HTTP-Referer": "https://github.com/VedPawar1410/hirelens",
-                "X-Title": "HireLens JD Generator",
-            })
-       
-        # Prepare request payload
-        payload = {
-            "model": self.model,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": system_prompt
-                },
-                {
-                    "role": "user",
-                    "content": user_prompt
-                }
-            ],
-            "temperature": 0.7,
-            "max_tokens": 2000
-        }
-       
-        try:
-            print(f"Calling LLM with model: {self.model}")
-            response = requests.post(self.api_url, json=payload, headers=headers, timeout=30)
-            response.raise_for_status()
-           
-            result = response.json()
-           
-            # Extract the generated JD
-            if "choices" in result and len(result["choices"]) > 0:
-                jd = result["choices"][0]["message"]["content"]
-                if jd and jd.strip():
-                    # Post-process to enforce fixed "About Us" section
-                    jd = self._enforce_about_us(jd.strip())
-                    return jd
-                else:
-                    print("Warning: LLM returned empty content")
-                    print("Attempting fallback model...")
-                    return self._retry_with_fallback(system_prompt, user_prompt, headers)
-            else:
-                print(f"Unexpected API response format: {result}")
-                print("Attempting fallback model...")
-                return self._retry_with_fallback(system_prompt, user_prompt, headers)
-       
-        except requests.exceptions.RequestException as e:
-            print(f"{self.provider.capitalize()} API Error: {e}")
-            if self.provider == "openrouter" and self.openrouter_fallback:
-                print("Attempting OpenRouter fallback model...")
-                fallback_result = self._retry_with_fallback(system_prompt, user_prompt, headers)
-                if fallback_result:
-                    return fallback_result
-            raise Exception(f"{self.provider.capitalize()} model failed. Error: {e}")
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            print("Attempting fallback model...")
-            fallback_result = self._retry_with_fallback(system_prompt, user_prompt, headers)
-            if not fallback_result:
-                raise
-            return fallback_result
-   
-    def _retry_with_fallback(self, system_prompt: str, user_prompt: str, headers: Dict) -> str:
-        """Retry with fallback model if primary fails"""
-        payload = {
-            "model": self.fallback_model,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            "temperature": 0.7,
-            "max_tokens": 2000
-        }
-       
-        try:
-            print(f"Retrying with fallback model: {self.fallback_model}")
-            response = requests.post(self.api_url, json=payload, headers=headers, timeout=30)
-            response.raise_for_status()
-            result = response.json()
-           
-            if "choices" in result and len(result["choices"]) > 0:
-                content = result["choices"][0]["message"]["content"]
-                if content and content.strip():
-                    print("Fallback model succeeded")
-                    return content.strip()
-                else:
-                    print("Fallback model returned empty content")
-                    return None
-            else:
-                print(f"Unexpected fallback response format: {result}")
-                return None
-        except Exception as e:
-            print(f"Fallback also failed: {e}")
-            return None
- 
+        jd = llm_client.chat(
+            [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
+            max_tokens=4096,
+            temperature=0.7,
+        )
+        if not jd:
+            raise RuntimeError("JD generation failed: no LLM provider returned content (check GROQ_API_KEY / GEMINI_API_KEY)")
+        # Post-process to enforce fixed "About Us" section
+        return self._enforce_about_us(jd)
+
     def _enforce_about_us(self, jd_content: str) -> str:
         return enforce_about_us(jd_content)
        
@@ -384,7 +267,7 @@ def main():
         # Initialize generator
         generator = JDGenerator()
         print("OK: JD Generator initialized successfully")
-        print(f"Using model: {generator.model}")
+        print("Using providers: " + ", ".join(p["name"] for p in llm_client.configured_providers()))
         print("-" * 60)
        
         # Generate JD

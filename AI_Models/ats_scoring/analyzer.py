@@ -1,27 +1,28 @@
 """
 ATS Analyzer Module
-Structured LLM analysis with provider fallback chain.
+Structured LLM scoring of a resume against a job description.
+Provider selection and fallback (Groq -> Gemini) live in llm_client.
 """
 
-import httpx
-import asyncio
-import os
 import json
 import logging
 import re
-from collections import deque
-from dotenv import load_dotenv
 from typing import Optional, Dict, Any
+
+import httpx
+from dotenv import load_dotenv
+
+import llm_client
 
 logger = logging.getLogger(__name__)
 
 load_dotenv()
 
 
-# The structured answer is JSON with two lists (key_matches, key_gaps). 400 tokens
-# could cut it off mid-list, which fails JSON parsing and silently drops the
-# breakdown via the plain-number fallback. 1024 leaves comfortable headroom.
-STRUCTURED_MAX_TOKENS = 1024
+# The structured answer is JSON with two lists (key_matches, key_gaps), and the default
+# models spend some output tokens "thinking" first. 400 tokens cut answers off mid-list
+# (failed JSON -> silent plain-number fallback); 2048 leaves comfortable headroom.
+STRUCTURED_MAX_TOKENS = 2048
 
 
 def compute_final_score(overall_score: float) -> int:
@@ -29,40 +30,11 @@ def compute_final_score(overall_score: float) -> int:
     return int(max(0, min(100, round(overall_score))))
 
 
-# ---------------------------------------------------------------------------
-# ATSAnalyzer
-# ---------------------------------------------------------------------------
-
 class ATSAnalyzer:
-    """Analyze candidate fit using LLM with structured JSON breakdown."""
+    """Analyze candidate fit using an LLM with a structured JSON breakdown."""
 
-    # LLM Configuration
-    DEFAULT_PROVIDER = os.getenv("DEFAULT_PROVIDER", "groq")
-
-    # NVIDIA Config
-    NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
-    NVIDIA_MODEL = os.getenv("NVIDIA_MODEL", "meta/llama-3.2-11b-vision-instruct")
-    NVIDIA_API_URL = os.getenv("NVIDIA_API_URL", "https://integrate.api.nvidia.com/v1/chat/completions")
-    NVIDIA_RATE_LIMIT = int(os.getenv("NVIDIA_RATE_LIMIT", "40"))
-    NVIDIA_RATE_LIMIT_WINDOW = int(os.getenv("NVIDIA_RATE_LIMIT_WINDOW", "60"))
-
-    # NVIDIA rate-limit state (sliding window)
-    _nvidia_request_times: deque = deque()
-    _nvidia_lock: Optional[asyncio.Lock] = None  # initialized in startup_event
-
-    # Shared async HTTP client — initialized in startup_event, closed in shutdown_event
+    # Shared async HTTP client — created in api_server startup, closed on shutdown
     _http_client: Optional[httpx.AsyncClient] = None
-
-    # OpenRouter Config
-    OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-    OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "openrouter/free")
-    OPENROUTER_FALLBACK = os.getenv("OPENROUTER_FALLBACK_MODEL", "openai/gpt-4o-mini")
-    OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-
-    # Groq Config
-    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-    GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
-    GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
     # ------------------------------------------------------------------
     # PRIMARY: Structured JSON prompt
@@ -138,29 +110,6 @@ Example: 75
         return None
 
     @staticmethod
-    async def _wait_for_nvidia_rate_limit() -> None:
-        """Yield to the event loop until a slot is available in the NVIDIA sliding-window rate limit."""
-        async with ATSAnalyzer._nvidia_lock:
-            loop = asyncio.get_running_loop()
-            now = loop.time()
-            window = ATSAnalyzer.NVIDIA_RATE_LIMIT_WINDOW
-            limit = ATSAnalyzer.NVIDIA_RATE_LIMIT
-
-            while ATSAnalyzer._nvidia_request_times and now - ATSAnalyzer._nvidia_request_times[0] >= window:
-                ATSAnalyzer._nvidia_request_times.popleft()
-
-            if len(ATSAnalyzer._nvidia_request_times) >= limit:
-                sleep_for = window - (now - ATSAnalyzer._nvidia_request_times[0])
-                if sleep_for > 0:
-                    logger.info(f"NVIDIA rate limit reached — waiting {sleep_for:.1f}s")
-                    await asyncio.sleep(sleep_for)
-                now = asyncio.get_running_loop().time()
-                while ATSAnalyzer._nvidia_request_times and now - ATSAnalyzer._nvidia_request_times[0] >= window:
-                    ATSAnalyzer._nvidia_request_times.popleft()
-
-            ATSAnalyzer._nvidia_request_times.append(asyncio.get_running_loop().time())
-
-    @staticmethod
     def _parse_structured_response(response_text: str) -> Optional[Dict[str, Any]]:
         """
         Parse the LLM's response as a structured JSON dict.
@@ -207,171 +156,15 @@ Example: 75
             return None
 
     @staticmethod
-    async def _call_nvidia(resume_content: str, jd_content: str, use_structured: bool = True) -> Optional[str]:
-        """Call NVIDIA AI Foundation API. Returns raw response text or None on error."""
-        try:
-            if not ATSAnalyzer.NVIDIA_API_KEY:
-                logger.warning("NVIDIA API key not configured")
-                return None
-
-            if ATSAnalyzer._http_client is None:
-                logger.error("HTTP client not initialized")
-                return None
-
-            await ATSAnalyzer._wait_for_nvidia_rate_limit()
-
-            headers = {
-                "Authorization": f"Bearer {ATSAnalyzer.NVIDIA_API_KEY}",
-                "Content-Type": "application/json"
-            }
-
-            template = ATSAnalyzer.ATS_STRUCTURED_PROMPT_TEMPLATE if use_structured else ATSAnalyzer.ATS_PROMPT_TEMPLATE
-            prompt = template.format(jd_content=jd_content, resume_content=resume_content)
-
-            payload = {
-                "model": ATSAnalyzer.NVIDIA_MODEL,
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.1,
-                "max_tokens": STRUCTURED_MAX_TOKENS if use_structured else 10,
-            }
-
-            response = await ATSAnalyzer._http_client.post(
-                ATSAnalyzer.NVIDIA_API_URL,
-                json=payload,
-                headers=headers
-            )
-
-            if response.status_code == 200:
-                text = response.json()["choices"][0]["message"]["content"].strip()
-                logger.info(f"NVIDIA response (structured={use_structured}): {text[:120]!r}")
-                return text
-            else:
-                logger.error(f"NVIDIA API error: {response.status_code} - {response.text}")
-                return None
-
-        except Exception as e:
-            logger.error(f"NVIDIA API call failed: {e}")
-            return None
-
-    @staticmethod
-    async def _call_groq(resume_content: str, jd_content: str, use_structured: bool = True) -> Optional[str]:
-        """Call Groq API. Returns raw response text or None on error."""
-        try:
-            if not ATSAnalyzer.GROQ_API_KEY:
-                logger.warning("Groq API key not configured")
-                return None
-
-            if ATSAnalyzer._http_client is None:
-                logger.error("HTTP client not initialized")
-                return None
-
-            headers = {
-                "Authorization": f"Bearer {ATSAnalyzer.GROQ_API_KEY}",
-                "Content-Type": "application/json"
-            }
-
-            template = ATSAnalyzer.ATS_STRUCTURED_PROMPT_TEMPLATE if use_structured else ATSAnalyzer.ATS_PROMPT_TEMPLATE
-            prompt = template.format(jd_content=jd_content, resume_content=resume_content)
-
-            payload = {
-                "model": ATSAnalyzer.GROQ_MODEL,
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.1,
-                "max_tokens": STRUCTURED_MAX_TOKENS if use_structured else 10,
-            }
-
-            response = await ATSAnalyzer._http_client.post(
-                ATSAnalyzer.GROQ_URL,
-                json=payload,
-                headers=headers
-            )
-
-            if response.status_code == 200:
-                text = response.json()["choices"][0]["message"]["content"].strip()
-                logger.info(f"Groq response (structured={use_structured}): {text[:120]!r}")
-                return text
-            else:
-                logger.error(f"Groq API error: {response.status_code} - {response.text}")
-                return None
-
-        except Exception as e:
-            logger.error(f"Groq API call failed: {e}")
-            return None
-
-    @staticmethod
-    async def _call_openrouter(resume_content: str, jd_content: str, use_structured: bool = True) -> Optional[str]:
-        """Call OpenRouter API. Returns raw response text or None on error."""
-        try:
-            if not ATSAnalyzer.OPENROUTER_API_KEY:
-                logger.warning("OpenRouter API key not configured")
-                return None
-
-            if ATSAnalyzer._http_client is None:
-                logger.error("HTTP client not initialized")
-                return None
-
-            headers = {
-                "Authorization": f"Bearer {ATSAnalyzer.OPENROUTER_API_KEY}",
-                "Content-Type": "application/json"
-            }
-
-            template = ATSAnalyzer.ATS_STRUCTURED_PROMPT_TEMPLATE if use_structured else ATSAnalyzer.ATS_PROMPT_TEMPLATE
-            prompt = template.format(jd_content=jd_content, resume_content=resume_content)
-
-            payload = {
-                "model": ATSAnalyzer.OPENROUTER_MODEL,
-                "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.1,
-                "max_tokens": STRUCTURED_MAX_TOKENS if use_structured else 10,
-            }
-
-            response = await ATSAnalyzer._http_client.post(
-                ATSAnalyzer.OPENROUTER_URL,
-                json=payload,
-                headers=headers
-            )
-
-            if response.status_code == 200:
-                text = response.json()["choices"][0]["message"]["content"].strip()
-                logger.info(f"OpenRouter response (structured={use_structured}): {text[:120]!r}")
-                return text
-            else:
-                logger.error(f"OpenRouter API error: {response.status_code} - {response.text}")
-                return None
-
-        except Exception as e:
-            logger.error(f"OpenRouter API call failed: {e}")
-            return None
-
-    @staticmethod
-    async def _get_raw_llm_response(resume_content: str, jd_content: str, use_structured: bool) -> Optional[str]:
-        """Route through the provider fallback chain and return the first successful raw text."""
-        provider = ATSAnalyzer.DEFAULT_PROVIDER
-
-        if provider == "nvidia":
-            text = await ATSAnalyzer._call_nvidia(resume_content, jd_content, use_structured)
-            if text is not None:
-                return text
-            logger.info("NVIDIA failed, trying Groq fallback...")
-            text = await ATSAnalyzer._call_groq(resume_content, jd_content, use_structured)
-            if text is not None:
-                return text
-            logger.info("Groq failed, trying OpenRouter fallback...")
-            return await ATSAnalyzer._call_openrouter(resume_content, jd_content, use_structured)
-
-        elif provider == "groq":
-            text = await ATSAnalyzer._call_groq(resume_content, jd_content, use_structured)
-            if text is not None:
-                return text
-            logger.info("Groq failed, trying OpenRouter fallback...")
-            return await ATSAnalyzer._call_openrouter(resume_content, jd_content, use_structured)
-
-        else:  # openrouter
-            text = await ATSAnalyzer._call_openrouter(resume_content, jd_content, use_structured)
-            if text is not None:
-                return text
-            logger.info("OpenRouter failed, trying Groq fallback...")
-            return await ATSAnalyzer._call_groq(resume_content, jd_content, use_structured)
+    async def _ask(prompt: str, structured: bool) -> Optional[str]:
+        """Send one prompt through the provider chain (Groq -> Gemini)."""
+        return await llm_client.achat(
+            [{"role": "user", "content": prompt}],
+            max_tokens=STRUCTURED_MAX_TOKENS if structured else 256,
+            temperature=0.1,
+            json_mode=structured,
+            client=ATSAnalyzer._http_client,
+        )
 
     @staticmethod
     async def score_candidate(resume_content: str, jd_content: str) -> Optional[Dict[str, Any]]:
@@ -384,17 +177,18 @@ Example: 75
             keys: skills_score, experience_score, education_score,
                   role_fit_score, key_matches, key_gaps
 
-        Returns None only if all LLM providers fail on both structured and fallback prompts.
+        Returns None only if every provider fails on both structured and fallback prompts.
         breakdown is None when the system uses the plain-number fallback.
         """
         if not resume_content or not jd_content:
             logger.error("Resume or JD content is empty")
             return None
 
-        logger.info(f"ATS scoring started (provider: {ATSAnalyzer.DEFAULT_PROVIDER})")
+        logger.info("ATS scoring started")
 
         # Step 1: Structured LLM prompt
-        raw_text = await ATSAnalyzer._get_raw_llm_response(resume_content, jd_content, use_structured=True)
+        prompt = ATSAnalyzer.ATS_STRUCTURED_PROMPT_TEMPLATE.format(jd_content=jd_content, resume_content=resume_content)
+        raw_text = await ATSAnalyzer._ask(prompt, structured=True)
 
         if raw_text is not None:
             parsed = ATSAnalyzer._parse_structured_response(raw_text)
@@ -417,7 +211,8 @@ Example: 75
             logger.warning("Structured JSON parse failed — falling back to plain-number prompt.")
 
         # Step 2: Fallback — plain-number prompt
-        fallback_text = await ATSAnalyzer._get_raw_llm_response(resume_content, jd_content, use_structured=False)
+        prompt = ATSAnalyzer.ATS_PROMPT_TEMPLATE.format(jd_content=jd_content, resume_content=resume_content)
+        fallback_text = await ATSAnalyzer._ask(prompt, structured=False)
 
         if fallback_text is None:
             logger.error("All LLM providers failed on both structured and fallback prompts.")
