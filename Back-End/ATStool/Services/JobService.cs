@@ -36,21 +36,10 @@ namespace ATStool.Services
             if (!string.IsNullOrEmpty(createdBy))
                 query = query.Where(j => j.CreatedBy == createdBy);
 
-            // H-7 fix — avoid loading entire table when only assignedTo filter is needed
+            // AssignedTo is a Postgres text[]; Npgsql translates Contains to `= ANY("AssignedTo")`,
+            // so the filter still runs server-side without raw SQL.
             if (!string.IsNullOrEmpty(assignedTo))
-            {
-                // OPENJSON lets SQL Server filter the JSON array server-side
-                var ids = await _context.Jobs
-                    .FromSqlRaw(@"
-                SELECT j.* FROM Jobs j
-                CROSS APPLY OPENJSON(j.AssignedTo) AS a
-                WHERE a.value = {0}", assignedTo)
-                    .AsNoTracking()
-                    .Select(j => j.Id)
-                    .ToListAsync();
-
-                query = query.Where(j => ids.Contains(j.Id));
-            }
+                query = query.Where(j => j.AssignedTo.Contains(assignedTo));
 
             return await query.ToListAsync();
         } 

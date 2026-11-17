@@ -13,6 +13,7 @@ namespace ATStool.Data
         public DbSet<Application> Applications { get; set; }
         public DbSet<Interview> Interviews { get; set; }
         public DbSet<CandidateNote> CandidateNotes { get; set; }
+        public DbSet<StoredFile> StoredFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,7 +35,11 @@ namespace ATStool.Data
                 .HasIndex(a => new { a.JobId, a.Status })
                 .HasDatabaseName("IX_Applications_JobId_Status");
 
-            // Limit Status/FolderStatus to nvarchar(50) so SQL Server can index them
+            // Resume / JD files (replaces Azure Blob containers)
+            modelBuilder.Entity<StoredFile>()
+                .HasKey(f => new { f.Container, f.Name });
+
+            // Keep Status/FolderStatus short; they are part of a composite index
             modelBuilder.Entity<Job>()
                 .Property(j => j.Status)
                 .HasMaxLength(50);

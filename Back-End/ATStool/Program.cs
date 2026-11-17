@@ -2,7 +2,6 @@ using ATStool.Constants;
 using ATStool.Data;
 using ATStool.Middleware;
 using ATStool.Models;
-using ATStool.Options;
 using ATStool.Queue;
 using ATStool.Services;
 using ATStool.Services.Interfaces;
@@ -35,8 +34,8 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddPooledDbContextFactory<AppDbContext>(opts =>
-    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-        sqlOpts => sqlOpts.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(3), errorNumbersToAdd: null)));
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+        npgsql => npgsql.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(3), errorCodesToAdd: null)));
 
 builder.Services.AddIdentityCore<User>()
     .AddRoles<IdentityRole>()
@@ -92,7 +91,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJobService, JobService>();
 builder.Services.AddScoped<ICandidateService, CandidateService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
-builder.Services.AddSingleton<IBlobService, BlobService>();
+builder.Services.AddSingleton<IBlobService, DbBlobService>(); // files live in Postgres (StoredFiles)
 builder.Services.AddHttpClient<IExternalApiService, ExternalApiService>();
 builder.Services.AddScoped<GlobalExceptionHandler>();
 builder.Services.AddScoped<IHashService, HashService>();
@@ -136,13 +135,16 @@ builder.Services.AddHttpClient("AtsScoreClient", client =>
 });
 
 builder.Services.AddHostedService<AtsScoreWorker>();
-builder.Services
-    .AddOptions<AzureBlobOptions>()
-    .BindConfiguration("AzureBlob")
-    .ValidateDataAnnotations()
-    .ValidateOnStart();
 
 var app = builder.Build();
+
+// Apply pending EF migrations on startup. Free hosting has no shell to run
+// `dotnet ef database update`; with a single instance there is no migration race.
+using (var scope = app.Services.CreateScope())
+{
+    using var db = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext();
+    await db.Database.MigrateAsync();
+}
 
 await SeedRoles(app);
 await SeedUsers(app);
