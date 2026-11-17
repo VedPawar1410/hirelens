@@ -15,7 +15,7 @@ vi.mock('../../../../features/recruiter/candidates/api/candidatesApi', () => ({
 import { useAuth } from '../../../hooks/useAuth'
 import { getCandidateNotes, addCandidateNote, deleteCandidateNote } from '../../../../features/recruiter/candidates/api/candidatesApi'
 
-const CURRENT_USER = { id: 'u1', username: 'alice', role: 'recruiter' as const, name: 'Alice Smith' }
+const CURRENT_USER = { id: 'u1', username: 'alice', role: 'recruitment' as const, name: 'Alice Smith' }
 
 const OWN_NOTE = {
   noteId: 'n1',

@@ -3,6 +3,11 @@ import type { ReactNode } from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ToastProvider } from '../../../../../shared/components/Toast/ToastProvider'
+
+vi.mock('../../../../../shared/hooks/useAuth', () => ({
+  useAuth: () => ({ user: { id: 'u1', username: 'tester', role: 'recruitment', name: 'Test User' }, isLoading: false, login: vi.fn(), logout: vi.fn() }),
+}))
 import CandidateDetailPage from '../CandidateDetailPage'
 import type { CandidateDetail } from '../../../../../shared/types/index'
 
@@ -46,7 +51,7 @@ const candidate: CandidateDetail = {
 
 function renderPage(ui: ReactNode) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>)
+  return render(<QueryClientProvider client={qc}><ToastProvider>{ui}</ToastProvider></QueryClientProvider>)
 }
 
 describe('Recruiter CandidateDetailPage', () => {
@@ -67,7 +72,7 @@ describe('Recruiter CandidateDetailPage', () => {
     vi.mocked(getCandidateById).mockResolvedValue(candidate)
     renderPage(<CandidateDetailPage />)
     await waitFor(() => expect(screen.getByText('Alice')).toBeInTheDocument())
-    expect(screen.getByText('AI Analysis Engine')).toBeInTheDocument()
+    expect(screen.getByText('88% ATS')).toBeInTheDocument()
     expect(screen.getByTestId('schedule-card')).toBeInTheDocument()
     expect(screen.getByTestId('feedback-card')).toBeInTheDocument()
   })

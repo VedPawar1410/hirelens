@@ -3,6 +3,11 @@ import type { ReactNode } from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ToastProvider } from '../../../../../shared/components/Toast/ToastProvider'
+
+vi.mock('../../../../../shared/hooks/useAuth', () => ({
+  useAuth: () => ({ user: { id: 'u1', username: 'tester', role: 'recruitment', name: 'Test User' }, isLoading: false, login: vi.fn(), logout: vi.fn() }),
+}))
 import { CandidateDetailPage } from '../CandidateDetailPage'
 import type { InterviewWithDetails } from '../../../../recruiter/candidates/api/interviewsApi'
 import type { CandidateDetail } from '../../../../../shared/types/index'
@@ -47,7 +52,7 @@ const candidate: CandidateDetail = {
 
 function renderPage(ui: ReactNode) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>)
+  return render(<QueryClientProvider client={qc}><ToastProvider>{ui}</ToastProvider></QueryClientProvider>)
 }
 
 describe('Interviewer CandidateDetailPage', () => {
@@ -60,11 +65,11 @@ describe('Interviewer CandidateDetailPage', () => {
     expect(screen.getAllByText('Alice').length).toBeGreaterThan(0)
   })
 
-  it('renders the interview details + AI analysis cards', async () => {
+  it('renders the interview details + ATS score badge', async () => {
     vi.mocked(getCandidateById).mockResolvedValue(candidate)
     renderPage(<CandidateDetailPage interview={interview} onBack={vi.fn()} onFeedbackSuccess={vi.fn()} />)
-    expect(screen.getByText('Interview Details')).toBeInTheDocument()
-    expect(screen.getByText('AI Analysis Engine')).toBeInTheDocument()
+    expect(screen.getByText('60 min')).toBeInTheDocument()
+    expect(await screen.findByText('88% ATS')).toBeInTheDocument()
   })
 
   it('renders the feedback section', async () => {

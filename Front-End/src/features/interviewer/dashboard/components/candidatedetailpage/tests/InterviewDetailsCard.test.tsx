@@ -26,9 +26,9 @@ function makeIv(overrides: Partial<InterviewWithDetails> = {}): InterviewWithDet
 }
 
 describe('InterviewDetailsCard', () => {
-  it('renders the header', () => {
+  it('hides the LIVE pill when the interview is not live', () => {
     render(<InterviewDetailsCard interview={makeIv()} live={false} />)
-    expect(screen.getByText('Interview Details')).toBeInTheDocument()
+    expect(screen.queryByText('LIVE')).not.toBeInTheDocument()
   })
 
   it('renders Round, Format, Duration', () => {
@@ -38,9 +38,9 @@ describe('InterviewDetailsCard', () => {
     expect(screen.getByText('45 min')).toBeInTheDocument()
   })
 
-  it('renders LIVE NOW pill when live=true', () => {
+  it('renders LIVE pill when live=true', () => {
     render(<InterviewDetailsCard interview={makeIv()} live />)
-    expect(screen.getByText('LIVE NOW')).toBeInTheDocument()
+    expect(screen.getByText('LIVE')).toBeInTheDocument()
   })
 
   it('renders Join Call when meetingLink present', () => {

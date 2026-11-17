@@ -84,7 +84,7 @@ describe('UploadProgressProvider', () => {
   })
 
   it('completed upload marks isComplete and calls onComplete', async () => {
-    const completionResult = { success: 2, failed: 0 }
+    const completionResult = { processed: 2, results: [] }
     vi.mocked(uploadResumes).mockResolvedValue(completionResult)
     const { result } = renderHook(() => useUploadProgress(), { wrapper: wrap(qc) })
     const onComplete = vi.fn()
@@ -125,7 +125,7 @@ describe('UploadProgressProvider', () => {
   })
 
   it('auto-dismisses 4s after completion', async () => {
-    vi.mocked(uploadResumes).mockResolvedValue({ success: 1, failed: 0 })
+    vi.mocked(uploadResumes).mockResolvedValue({ processed: 1, results: [] })
     const { result } = renderHook(() => useUploadProgress(), { wrapper: wrap(qc) })
 
     await act(async () => {

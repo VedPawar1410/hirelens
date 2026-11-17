@@ -31,27 +31,27 @@ const candidate: CandidateDetail = {
 
 describe('CandidateHeader (interviewer)', () => {
   it('renders candidate name', () => {
-    render(<CandidateHeader interview={interview} candidate={candidate} isMobile={false} />)
+    render(<CandidateHeader interview={interview} candidate={candidate} matchScore={null} isMobile={false} />)
     expect(screen.getByText('Alice')).toBeInTheDocument()
   })
 
   it('falls back to candidateRole/jobTitle when candidate.currentRole missing', () => {
-    render(<CandidateHeader interview={interview} candidate={null} isMobile={false} />)
+    render(<CandidateHeader interview={interview} candidate={null} matchScore={null} isMobile={false} />)
     expect(screen.getByText('Dev')).toBeInTheDocument()
   })
 
   it('renders status badge', () => {
-    render(<CandidateHeader interview={interview} candidate={candidate} isMobile={false} />)
+    render(<CandidateHeader interview={interview} candidate={candidate} matchScore={null} isMobile={false} />)
     expect(screen.getByText('Shortlisted')).toBeInTheDocument()
   })
 
   it('renders Duplicate flag when set', () => {
-    render(<CandidateHeader interview={interview} candidate={{ ...candidate, isDuplicate: true }} isMobile={false} />)
+    render(<CandidateHeader interview={interview} candidate={{ ...candidate, isDuplicate: true }} matchScore={null} isMobile={false} />)
     expect(screen.getByText('Duplicate')).toBeInTheDocument()
   })
 
   it('renders contact details', () => {
-    render(<CandidateHeader interview={interview} candidate={candidate} isMobile={false} />)
+    render(<CandidateHeader interview={interview} candidate={candidate} matchScore={null} isMobile={false} />)
     expect(screen.getByText('a@x.com')).toBeInTheDocument()
     expect(screen.getByText('555')).toBeInTheDocument()
     expect(screen.getByText('linkedin.com/in/a')).toBeInTheDocument()
@@ -59,7 +59,7 @@ describe('CandidateHeader (interviewer)', () => {
   })
 
   it('falls back to "Candidate" when name null', () => {
-    render(<CandidateHeader interview={{ ...interview, candidateName: null }} candidate={null} isMobile={false} />)
+    render(<CandidateHeader interview={{ ...interview, candidateName: null }} candidate={null} matchScore={null} isMobile={false} />)
     expect(screen.getByText('Candidate')).toBeInTheDocument()
   })
 })

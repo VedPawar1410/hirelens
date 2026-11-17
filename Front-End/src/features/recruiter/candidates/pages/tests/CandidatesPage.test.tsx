@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { ReactNode } from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ToastProvider } from '../../../../../shared/components/Toast/ToastProvider'
 import CandidatesPage from '../CandidatesPage'
 
 const navigateMock = vi.fn()
@@ -28,7 +29,7 @@ import { getUpcomingInterviews } from '../../api/interviewsApi'
 
 function renderPage(ui: ReactNode) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-  return render(<QueryClientProvider client={qc}>{ui}</QueryClientProvider>)
+  return render(<QueryClientProvider client={qc}><ToastProvider>{ui}</ToastProvider></QueryClientProvider>)
 }
 
 const emptyCounts = {

@@ -17,14 +17,14 @@ describe('getResumes', () => {
   afterEach(() => vi.restoreAllMocks())
 
   it('GETs /resumes?jobId=', async () => {
-    fetchSpy.mockResolvedValue(ok({ resumes: [] }))
+    fetchSpy.mockResolvedValue(ok({ success: true, message: "ok", data: [] }))
     await getResumes('j1')
     expect(fetchSpy.mock.calls[0][0]).toBe('/api/resumes?jobId=j1')
   })
 
   it('returns the mapped Resume[] array', async () => {
     fetchSpy.mockResolvedValue(ok({
-      resumes: [
+      data: [
         {
           id: 'r1',
           filename: 'a.pdf',
@@ -43,7 +43,7 @@ describe('getResumes', () => {
   })
 
   it('returns empty array when none', async () => {
-    fetchSpy.mockResolvedValue(ok({ resumes: [] }))
+    fetchSpy.mockResolvedValue(ok({ success: true, message: "ok", data: [] }))
     const result = await getResumes('j1')
     expect(result).toEqual([])
   })
